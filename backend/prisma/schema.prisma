@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model app_user {
+  id            String          @id @db.VarChar
+  given_name    String?         @db.VarChar
+  family_name   String?         @db.VarChar
+  email         String?         @unique @db.VarChar
+  password      String?         @db.VarChar
+  app_database  app_database[]
+  project       project[]
+  userWorkspace userWorkspace[]
+  workspace     workspace[]
+}
+
+model db_connection {
+  id           String        @id @db.VarChar
+  host         String?       @db.VarChar
+  port         String?       @db.VarChar
+  user         String?       @db.VarChar
+  password     String?       @db.VarChar
+  ssl          Boolean?
+  database_id  String?       @db.VarChar
+  app_database app_database? @relation(fields: [database_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model db_field {
+  id                                           String      @id @db.VarChar
+  name                                         String?     @db.VarChar
+  index                                        Int?
+  table_id                                     String?     @db.VarChar
+  type_id                                      Int?
+  is_primary_key                               Boolean?
+  is_foreign_key                               Boolean?
+  foreign_table_id                             String?     @db.VarChar
+  foreign_field_id                             String?     @db.VarChar
+  is_unique                                    Boolean?
+  is_nullable                                  Boolean?
+  default_value                                String?     @db.VarChar
+  length                                       Int?
+  precision                                    Int?
+  scale                                        Int?
+  db_field                                     db_field?   @relation("db_fieldTodb_field", fields: [foreign_field_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_db_field                               db_field[]  @relation("db_fieldTodb_field")
+  db_table_db_field_foreign_table_idTodb_table db_table?   @relation("db_field_foreign_table_idTodb_table", fields: [foreign_table_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  db_table_db_field_table_idTodb_table         db_table?   @relation("db_field_table_idTodb_table", fields: [table_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  field_type                                   field_type? @relation(fields: [type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([name, table_id])
+}
+
+model db_table {
+  id                                           String        @id @db.VarChar
+  name                                         String?       @db.VarChar
+  database_id                                  String?       @db.VarChar
+  position_x                                   Decimal?      @db.Decimal
+  position_Y                                   Decimal?      @db.Decimal
+  db_field_db_field_foreign_table_idTodb_table db_field[]    @relation("db_field_foreign_table_idTodb_table")
+  db_field_db_field_table_idTodb_table         db_field[]    @relation("db_field_table_idTodb_table")
+  app_database                                 app_database? @relation(fields: [database_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([name, database_id])
+}
+
+model db_type {
+  id           Int            @id
+  name         String?        @db.VarChar
+  description  String?        @db.VarChar
+  app_database app_database[]
+}
+
+model field_type {
+  id       Int        @id
+  name     String?    @db.VarChar
+  description String? @db.VarChar
+  db_field db_field[]
+}
+
+model role {
+  id            Int             @id
+  name          String?         @db.VarChar
+  description   String?         @db.VarChar
+  userWorkspace userWorkspace[]
+}
+
+model userWorkspace {
+  user_id      String    @db.VarChar
+  workspace_id String    @db.VarChar
+  role_id      Int?
+  role         role?     @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  app_user     app_user  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  workspace    workspace @relation(fields: [workspace_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([user_id, workspace_id])
+}
+
+model app_database {
+  id                 String          @id @db.VarChar
+  name               String?         @db.VarChar
+  description        String?         @db.VarChar
+  original_db_id     String?         @db.VarChar
+  type_id            Int?
+  project_id         String?         @db.VarChar
+  created_by         String?         @db.VarChar
+  created_at         DateTime?       @db.Timestamptz(6)
+  updated_at         DateTime?       @db.Timestamptz(6)
+  app_user           app_user?       @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  app_database       app_database?   @relation("app_databaseToapp_database", fields: [original_db_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  other_app_database app_database[]  @relation("app_databaseToapp_database")
+  project            project?        @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  db_type            db_type?        @relation(fields: [type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  db_connection      db_connection[]
+  db_table           db_table[]
+}
+
+model project {
+  id           String         @id @db.VarChar
+  name         String?        @db.VarChar
+  description  String?        @db.VarChar
+  workspace_id String?        @db.VarChar
+  created_by   String?        @db.VarChar
+  created_at   DateTime?      @db.Timestamptz(6)
+  updated_at   DateTime?      @db.Timestamptz(6)
+  app_database app_database[]
+  app_user     app_user?      @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  workspace    workspace?     @relation(fields: [workspace_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model workspace {
+  id            String          @id @db.VarChar
+  name          String?         @db.VarChar
+  description   String?         @db.VarChar
+  created_by    String?         @db.VarChar
+  created_at    DateTime?       @db.Timestamptz(6)
+  updated_at    DateTime?       @db.Timestamptz(6)
+  project       project[]
+  userWorkspace userWorkspace[]
+  app_user      app_user?       @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
