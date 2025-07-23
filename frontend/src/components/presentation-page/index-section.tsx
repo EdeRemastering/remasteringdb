@@ -4,7 +4,7 @@ import {User2} from 'lucide-react'
 
 export const IndexSection = () => {
   return (
-    <div className='flex flex-col items-center justify-center h-screen gap-10'>
+    <div className='flex flex-col items-center justify-center h-screen gap-10 bg-gradient-to-br from-white to-violet-100'>
         <Badge className='bg-blue-50 border border-blue-500 font-bold text-blue-500 px-4 py-2 rounded-full'><User2 /> Used by 1000+ developers</Badge>
         <div className="flex flex-col gap-10 w-[80vw]">
         <h1 className='text-center text-7xl font-bold'>Manage your databases visually with ease using 
