@@ -1,10 +1,10 @@
 import React from "react";
-import { features } from "./data";
+import { featuresData } from "./data/features-section";
 
 export const FeaturesSection = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-10">
-      <div className="flex flex-col gap-10 w-[80vw]">
+      <div className="flex flex-col gap-10 w-[90vw]">
         <div className="flex flex-col gap-4">
           <h1 className="text-5xl text-center font-bold">Powerful <span className="bg-gradient-to-r from-blue-500 to-violet-600 text-transparent bg-clip-text">Features</span></h1>
           <p className="text-lg text-center text-gray-500">
@@ -13,7 +13,7 @@ export const FeaturesSection = () => {
           </p>
         </div>
         <div className="grid grid-cols-3 gap-4">
-          {features.map((feature) => (
+          {featuresData.map((feature) => (
             <div className="flex flex-col gap-4 bg-white rounded-sm p-4 min-h-[200px] border border-gray-200 hover:border-blue-500 transition-all duration-300">
               <div className="flex items-center justify-start">
                 <div className="bg-gradient-to-br from-blue-500 to-violet-600 rounded-sm p-2 text-white">
