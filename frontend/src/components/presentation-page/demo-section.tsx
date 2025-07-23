@@ -29,7 +29,7 @@ export const DemoSection = () => {
             <button className="flex items-center gap-4 bg-gradient-to-r from-blue-500 to-violet-600 text-white px-4 py-2 rounded-md cursor-pointer">
               <Play className="w-4 h-4" /> Watch Interactive Demo
             </button>
-            <button className="flex items-center gap-4 border border-black px-4 py-2 rounded-md cursor-pointer">
+            <button className="flex  bg-white items-center gap-4 border border-gray-200 px-4 py-2 rounded-md cursor-pointer">
               Start for free <ArrowRight className="w-4 h-4" />
             </button>
           </div>
